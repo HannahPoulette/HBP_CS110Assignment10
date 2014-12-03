@@ -112,7 +112,7 @@ public class Card
             suitN = "Spades"; 
             break;}
             
-      fileName = rankN + "of" + suitN; 
+      fileName = rankN + "of" + suitN + ".jpg"; 
       return fileName; 
    
    }
