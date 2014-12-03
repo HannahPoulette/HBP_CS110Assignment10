@@ -8,7 +8,7 @@ public class QueueReferenceBased  implements QueueInterface{
       @returns true if the queue is empty; otherwise returns false.
   */
   public boolean isEmpty() {
-    return lastNode == null;
+    return (lastNode == null);
   }  
   /** Removes all items of a queue.
   */

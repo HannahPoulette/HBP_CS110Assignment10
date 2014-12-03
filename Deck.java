@@ -41,26 +41,40 @@ public class Deck extends QueueReferenceBased
    {
       return (((Card)super.dequeue())); 
    }
+   
+   public int getSize()
+   {
+      return size;
+   }
+   
       
    public void shuffle()
    {
-      Card[] shuffling = new Card[size-1]; 
+      Card[] shuffling = new Card[size]; 
       Random rand = new Random(); 
       
-      for(int i = 0; i < size; i++)
+      //put all cards into an array
+      int i = 0; 
+      while(i < size)
       {
          shuffling[i] = ((Card)super.dequeue()); 
+         i++;
       }
       
       
-      for(int i = 0; i < size; i++)
+      
+      //shuffle the array
+      for(i = 0; i < size-1; i++)
       {
-         int r = rand.nextInt(53) + 1;
+         int r = rand.nextInt(52) + 0;
          Card randomCard = shuffling[r];
          shuffling[r] = shuffling[i];
          shuffling[i] = randomCard; 
       }
- 
+      
+      //reload shuffled deck
+      for(i = 0; i< size-1; i++)
+         super.enqueue(shuffling[i]); 
       
    }
    

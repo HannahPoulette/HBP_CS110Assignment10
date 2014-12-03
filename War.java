@@ -8,12 +8,15 @@ public class War
 {
 
    private int numPlayers = 1; 
-   private Deck dealer; 
-   private Deck d1; 
-   private Deck d2; 
-   
+   private Deck dealer, d1, d2; 
+ 
    public War()
    {
+      //Create the decks
+      dealer = new Deck(); 
+      d1 = new Deck();
+      d2 = new Deck(); 
+      
       //start with an empty card at the 2 of clubs
       Card c = new Card(); 
       int s = c.CLUB;
@@ -22,17 +25,17 @@ public class War
       //Add the cards to the dealer's pile
       while (s <= c.SPADE)
       {
-         c.setSuit(s); 
-      
          while (r <= c.ACE)
          {
-            c.setRank(r);
-            dealer.enqueue(c); 
+            Card dealing = new Card(s, r); 
+            dealer.enqueue(dealing); 
             r++; 
          }
          
          s++; 
+         r = c.MIN_RANK; 
       }
+       
       
       //shuffle the dealer's deck
       dealer.shuffle();
@@ -40,7 +43,13 @@ public class War
       //deal the piles
       deal();
       
+      //Opening preferences
+      
+      //Open game board
+      GameBoard aGame = new GameBoard();
+      
    }
+
    
    private void deal()
    { 
@@ -52,6 +61,12 @@ public class War
          i++;
       }
    }
+   
+   public static void main(String[] args)
+   {
+       War playWar = new War(); 
+   }
+
       
 
       
