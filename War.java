@@ -12,7 +12,11 @@ public class War
    private Deck warPile;
    private GameBoard board;
    private boolean gameOver;   
- 
+   
+   /**Consturctor creates 3 decks. 
+   It fills the master deck with the fill deck method,
+   shuffles it and then deals*/ 
+   
    public War()
    {
       //Create the decks
@@ -27,6 +31,13 @@ public class War
       deal(); //deal the piles       
       
    }
+   
+   /**getTopCard returns the top card of
+   either deck. The argument determine the deck
+   it it pulled from
+   @param i the deck specifier
+   @return thisCard
+   */
    
    public Card getTopCard(int i)
    {
@@ -43,6 +54,19 @@ public class War
       return thisCard; 
     }
     
+    /**pileSize method returns the size of the warPile
+    @return int the pile size*/
+    public int pileSize()
+    {
+      return warPile.getSize();
+    }
+    
+    /**pushCards puts two cards into
+    the deck specified by the arguement
+    @param c a card
+    @param d a card
+    @param i the deck specificer
+    */
     public void pushCards(Card c, Card d, int i)
     {
       if( i == P1)
@@ -57,12 +81,19 @@ public class War
       }
    }
    
+   /**pushCards is overloead to add cards
+   to the warpile
+   @param c, d the cards*/
    public void pushCards(Card c, Card d)
    {
       warPile.enqueue(c);
       warPile.enqueue(d); 
    }
    
+   /**pushcards is overloaded to add
+   the cards in the warPile to a deck
+   specified by the arugement
+   @param j the deck specifier*/
    public void pushCards(int j)
    {
       for( int i = 0; i < warPile.getSize(); i++)
@@ -77,6 +108,10 @@ public class War
       }
    }
    
+   /**hasAnyoneLost returns a boolean 
+   representng if either deck is empty
+   @boolean gameOver    is the game is over
+   */
    public boolean hasAnyoneLost()
    {
       gameOver = false;
@@ -87,8 +122,7 @@ public class War
    }
       
   
-    
-      
+   /**fillDeck adds every card to the dealer's deck*/
    public void fillDeck()
    {
       //start with an empty card at the 2 of clubs
@@ -110,7 +144,7 @@ public class War
       }
    }
        
-    
+   /**deal sorts the cards into two decks*/
    private void deal()
    { 
       for(int i = 1; i <= dealer.NUM_CARDS; i++)

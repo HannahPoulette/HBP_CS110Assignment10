@@ -17,13 +17,13 @@ public class GameBoard extends JFrame
   
    
    //for the north panel
-      private JTextField win1, win2; //read only textfields that hold #wins
+      
       private JTextField p1n, p2n; //read onlytextfields for names of player
-      private JLabel cardMessage1,cardMessage2, winMessage1, winMessage2; //messages for card and win#'s
+      private JLabel cardMessage1,cardMessage2; 
       private JTextField eastCard, westCard; //number of cards in deck
       
    //for south panel
-      private JButton newGame, help, about; //two info buttons and a restart button
+      private JButton help, about; //two info buttons 
    
    //for east panel
       private ImageIcon bE, ipE; 
@@ -86,16 +86,7 @@ public class GameBoard extends JFrame
    {     
          north = new JPanel(); 
          
-         //number of wins
-         win1 = new JTextField(3);
-         win2 = new JTextField(3);
-
-         win1.setEditable(false); 
-         win2.setEditable(false); 
-
-         win1.setText("0"); 
-         win2.setText("0");
- 
+        
          //name boxes
          p1n = new JTextField(10);  
          p2n = new JTextField(10); 
@@ -119,85 +110,83 @@ public class GameBoard extends JFrame
         
          //Messages
          cardMessage1 = new JLabel("Cards:");
-         winMessage1 = new JLabel("Wins:"); 
+        
          cardMessage2 = new JLabel("Cards:");
-         winMessage2 = new JLabel("Wins:"); 
-         
+                 
          //group components
          JPanel northWest = new JPanel();
          JPanel northEast = new JPanel(); 
          
-         northWest.setLayout(new GridLayout(3,2)); 
-         northEast.setLayout(new GridLayout(3,2)); 
+         northWest.setLayout(new GridLayout(2,2)); 
+         northEast.setLayout(new GridLayout(2,2)); 
                
          northWest.add(new JLabel(""));
          northWest.add(p1n);
          northWest.add(cardMessage1);
          northWest.add(westCard);
-         northWest.add(winMessage1);
-         northWest.add(win1); 
-      
+               
          northEast.add(new JLabel(""));
          northEast.add(p2n);
          northEast.add(cardMessage2); 
          northEast.add(eastCard); 
-         northEast.add(winMessage2);
-         northEast.add(win2); 
-      
-         //Add to the north panel
+        
+                 //Add to the north panel
          north.add(northWest);
          north.add(northEast);
     }
     
-      //North Methods
-      public void setName(String name, int i)
+     
+      /**addCardEast method substracts a card from the westcard number
+      and adds one to the eastcard number*/
+      public void addCardEast()
       {
-         if (i == 1)
-            p1n.setText(name);
-         else if (i ==2)
-            p2n.setText(name); 
-         else
-            throw new IllegalArgumentException("No such player"); 
+         int newScoreE = Integer.parseInt(eastCard.getText()) + 1;
+         eastCard.setText(Integer.toString(newScoreE));
+         
+         int newScoreW = Integer.parseInt(westCard.getText()) - 1; 
+         westCard.setText(Integer.toString(newScoreW)); 
       }
-      
-      
-      public JTextField addWin(JTextField winner)
+       
+       /**addCardWest method substracts a card from the eastcard number
+      and adds one to the west number*/
+      public void addCardWest()
       {
-        
-         int score = 1 + Integer.parseInt(winner.getText());
-         String sScore = Integer.toString(score); 
-         winner.setText(sScore); 
-         return winner; 
+         int newScoreE = Integer.parseInt(eastCard.getText()) - 1;
+         eastCard.setText(Integer.toString(newScoreE));
+         
+         int newScoreW = Integer.parseInt(westCard.getText()) + 1; 
+         westCard.setText(Integer.toString(newScoreW)); 
       }
+
       
+          
       /**SouthBuilder builds the south panel*/
       public void SouthBuilder()
       {
          south = new JPanel(); 
       
          //Create buttons.
-         newGame = new JButton("New Game");
-         help = new JButton("Help");
+                 help = new JButton("Help");
          about = new JButton("About"); 
       
          //add action listeners to buttons 
-         //newGame.addActionListener(new newGameListener()); 
+       ; 
          help.addActionListener(new helpListener()); 
          about.addActionListener(new aboutListener()); 
       
          //add buttons to panel
-         south.add(newGame);
          south.add(help);
          south.add(about); 
       }
       
-      //south actionListeners
+      /**helpListener is an action handler for the help button
+      it displays instructions*/
       private class helpListener implements ActionListener
       {
          public void actionPerformed(ActionEvent e)
          {
-            JOptionPane.showMessageDialog(null, "To play, click the Battle button."  +
-                                    "This will play the top card of both decks\n." +
+            JOptionPane.showMessageDialog(null, "To play, click the Battle button. "  +
+                                    "This will play the top card of both decks.\n" +
                                     "Whoever has the higher ranking card wins and adds both carda" +
                                     "To the bottom of their pile. \n\n" +
                                     "If the cards are equal, a war is started! \n" +
@@ -206,7 +195,9 @@ public class GameBoard extends JFrame
                                     "Good Luck!"); 
          }
       }
-   
+      /**aboutListener is an action handler for the about button
+      it displays information about the program and is mostly 
+      just there to take up space*/ 
       private class aboutListener implements ActionListener
       {
          public void actionPerformed(ActionEvent e)
@@ -217,15 +208,7 @@ public class GameBoard extends JFrame
          }
       }
    
-   
-  //  private class newGameListener implements ActionListener
-//    {
-//       public void actionPerformed(ActionEvent e)
-//       {
-//       }
-//    }
-      
-      //EastBuilder
+      /**EastBuilder builds the east panel*/ 
       public void EastBuilder()
       {
          east = new JPanel(); 
@@ -244,7 +227,10 @@ public class GameBoard extends JFrame
        }
        
        
-      //East methods
+       /**setEast accepts a card as an argument 
+      and sets the image in it's panel
+      to the image of that card
+      @param c the card*/
       public void setEast(Card c)
       {
          String fileName = c.getFileName(); 
@@ -252,7 +238,7 @@ public class GameBoard extends JFrame
          inPlayE.setIcon(icon);
       }
             
-      //WestBuilder
+      /**WestBuilder builds the west Panel*/
       private void WestBuilder()
       {
          west = new JPanel(); 
@@ -271,7 +257,10 @@ public class GameBoard extends JFrame
        }
        
        
-       //West methods
+      /**setWest accepts a card as an argument 
+      and sets the image in it's panel
+      to the image of that card
+      @param c the card*/
       public void setWest(Card c)
       { 
          String fileName = c.getFileName(); 
@@ -280,7 +269,7 @@ public class GameBoard extends JFrame
       }
       
   
-      //Center Builder
+      /**Center Builder creates the center panel*/
       private void CenterBuilder()
       {
          center = new JPanel(); 
@@ -321,8 +310,7 @@ public class GameBoard extends JFrame
          center.add(battleP);
       }
       
-      //Center action handlers
-      
+      /**The startListener class is an event handler for the startGame button*/
       private class startListener implements ActionListener
       {
          public void actionPerformed(ActionEvent e)
@@ -332,7 +320,7 @@ public class GameBoard extends JFrame
             
          }
       }
-      
+      /**The battlListener class is an event handler for the battle button*/
       private class battleListener implements ActionListener
       {
          public void actionPerformed(ActionEvent e)
@@ -357,12 +345,14 @@ public class GameBoard extends JFrame
                displayWinner(1); 
                battleAgain.setVisible(true); 
                game.pushCards(wPlay, ePlay, 1); 
+               addCardWest(); 
             }
             else if (wPlay.getRank() < ePlay.getRank())
             {
                displayWinner(2); 
                battleAgain.setVisible(true); 
                game.pushCards(wPlay, ePlay, 2); 
+               addCardEast();
             }
                
             else if (wPlay.getRank() == ePlay.getRank())
@@ -375,7 +365,7 @@ public class GameBoard extends JFrame
             
          }
       }
-      
+      /**The againListener class is an event handler for the battleAgain button*/
       private class againListener implements ActionListener
       {
          public void actionPerformed(ActionEvent e)
@@ -389,7 +379,7 @@ public class GameBoard extends JFrame
          }
       }
 
-      
+      /**The warListener class is an event handler for the war button*/
       private class warListener implements ActionListener
       {
          public void actionPerformed(ActionEvent e)
@@ -406,14 +396,22 @@ public class GameBoard extends JFrame
                displayWinner(1); 
                battleAgain.setVisible(true); 
                game.pushCards(wPlay, ePlay, 1); 
+               addCardWest();
                game.pushCards(1);
+               for (int i = 0; i < game.pileSize(); i++)
+                  addCardWest();
+                  
             }
             else if (wPlay.getRank() < ePlay.getRank())
             {
                displayWinner(2); 
                battleAgain.setVisible(true); 
                game.pushCards(wPlay, ePlay, 2); 
-               game.pushCards(2); 
+               addCardEast();
+               game.pushCards(2);
+               for (int i = 0; i < game.pileSize(); i++)
+                  addCardEast();
+ 
             }
                
             else if (wPlay.getRank() == ePlay.getRank())
@@ -426,16 +424,17 @@ public class GameBoard extends JFrame
              
          }
       }
-
-      //Center Methods
-               
+  
    
-      
+      /**hudeWar makes war button invisible*/
       public void hideWar()
       {
          warTime.setVisible(false);
       }
       
+      /**displayWinner makes the winner label visible
+      depending on the argument specifier
+      @param i the winner specificer*/
       public void displayWinner(int i)
       {
          if(i == 1)
@@ -449,6 +448,7 @@ public class GameBoard extends JFrame
          }
       }
       
+      /**hideWinner makes both winner labels invisible*/
       public void hideWinner()
       {
          wWin.setVisible(false);
@@ -458,7 +458,7 @@ public class GameBoard extends JFrame
      
                              
       
-
+   /**Main creates instance of game board*/
    public static void main(String[] args)
    {
       GameBoard aGame = new GameBoard(); 
