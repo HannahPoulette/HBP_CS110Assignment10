@@ -12,6 +12,9 @@ public class GameBoard extends JFrame
    final int WINDOW_WIDTH = 1000; //width in pixels
    final int WINDOW_HEIGHT = 600; //length in pixels
    private JPanel north, south, east, west, center; //reference for the panels
+   private War game; 
+   private Card wPlay, ePlay; 
+  
    
    //for the north panel
       private JTextField win1, win2; //read only textfields that hold #wins
@@ -26,18 +29,22 @@ public class GameBoard extends JFrame
       private ImageIcon bE, ipE; 
       private JLabel backE, inPlayE;
       
+      
    //for west panel
       private ImageIcon bW, ipW; 
       private JLabel backW, inPlayW;
-
+   
    //for center panel
-      private JButton battle, warTime; 
+      private JButton battle, warTime, startGame, battleAgain; 
       private JPanel battleP; 
       private boolean clicked; 
-      private JTextField wWin, eWin; 
+      private JTextField wWin, eWin, over; 
+      private int winner; 
 
 
-   
+   /**Constructor creates a new Fram and panels in all 5 directions. 
+   Also starts a new 
+   instance of the war class.*/
    public GameBoard()
    {
       setTitle("War"); //set the title
@@ -60,13 +67,21 @@ public class GameBoard extends JFrame
  
       CenterBuilder();
       add(center, BorderLayout.CENTER); 
+      
+      startGame(); 
   
       pack(); 
       setVisible(true); //display the window
       
    }
    
-   
+   /**Starts a new game of war*/
+   public void startGame()
+   {
+      game = new War(); 
+   } 
+    
+   /**builds the north panel*/
    private void NorthBuilder()
    {     
          north = new JPanel(); 
@@ -146,7 +161,6 @@ public class GameBoard extends JFrame
       }
       
       
-      
       public JTextField addWin(JTextField winner)
       {
         
@@ -156,7 +170,7 @@ public class GameBoard extends JFrame
          return winner; 
       }
       
-      //southBuilder
+      /**SouthBuilder builds the south panel*/
       public void SouthBuilder()
       {
          south = new JPanel(); 
@@ -230,13 +244,14 @@ public class GameBoard extends JFrame
        }
        
        
-       //East methods
-      public void setEPicture(String fileName)
+      //East methods
+      public void setEast(Card c)
       {
+         String fileName = c.getFileName(); 
          ImageIcon icon = new ImageIcon(fileName);
          inPlayE.setIcon(icon);
       }
-      
+            
       //WestBuilder
       private void WestBuilder()
       {
@@ -257,34 +272,48 @@ public class GameBoard extends JFrame
        
        
        //West methods
-      public void setWPicture(String fileName)
-      {
+      public void setWest(Card c)
+      { 
+         String fileName = c.getFileName(); 
          ImageIcon icon = new ImageIcon(fileName);
          inPlayW.setIcon(icon);
       }
-
-
+      
+  
       //Center Builder
       private void CenterBuilder()
       {
          center = new JPanel(); 
          
-         clicked = false;
-                 
+         startGame = new JButton("Begin Game"); 
+         startGame.addActionListener(new startListener()); 
+         
          battle = new JButton("Battle");
+         battle.setVisible(false); 
          battle.addActionListener(new battleListener()); 
+         
+         battleAgain = new JButton("Try Again");
+         battleAgain.setVisible(false); 
+         battleAgain.addActionListener(new againListener()); 
         
          warTime = new JButton("War!");
          warTime.setVisible(false); 
+         warTime.addActionListener(new warListener()); 
          
-         wWin = new JTextField(p1n.getText() + "Wins this round!");
+         over = new JTextField("Game Over"); 
+         over.setVisible(false); 
+         
+         wWin = new JTextField(p1n.getText() + " Wins this round!");
          wWin.setVisible(false);
-         eWin = new JTextField(p2n.getText() + "Wins this round!");
+        
+         eWin = new JTextField(p2n.getText() + " Wins this round!");
          eWin.setVisible(false); 
             
          battleP = new JPanel();
-         battleP.setLayout(new GridLayout(4,1)); 
+         battleP.setLayout(new GridLayout(7,1)); 
+         battleP.add(startGame); 
          battleP.add(battle); 
+         battleP.add(battleAgain); 
          battleP.add(warTime); 
          battleP.add(eWin);
          battleP.add(wWin); 
@@ -293,38 +322,114 @@ public class GameBoard extends JFrame
       }
       
       //Center action handlers
+      
+      private class startListener implements ActionListener
+      {
+         public void actionPerformed(ActionEvent e)
+         {
+            battle.setVisible(true);
+            startGame.setVisible(false);
+            
+         }
+      }
+      
       private class battleListener implements ActionListener
       {
          public void actionPerformed(ActionEvent e)
          {
-            setClicked(true);
+            battle.setVisible(false);
+            
+            if(game.hasAnyoneLost() == true)
+            {
+               over.setVisible(true);
+            }
+               
+            
+            if(game.hasAnyoneLost() != true)
+            { 
+            wPlay = game.getTopCard(1);
+            ePlay = game.getTopCard(2); 
+            setEast(ePlay);
+            setWest(wPlay); 
+  
+            if(wPlay.getRank() > ePlay.getRank())
+            {
+               displayWinner(1); 
+               battleAgain.setVisible(true); 
+               game.pushCards(wPlay, ePlay, 1); 
+            }
+            else if (wPlay.getRank() < ePlay.getRank())
+            {
+               displayWinner(2); 
+               battleAgain.setVisible(true); 
+               game.pushCards(wPlay, ePlay, 2); 
+            }
+               
+            else if (wPlay.getRank() == ePlay.getRank())
+            {
+                warTime.setVisible(true);
+                game.pushCards(wPlay, ePlay); 
+            }
+            }
+               
             
          }
       }
+      
+      private class againListener implements ActionListener
+      {
+         public void actionPerformed(ActionEvent e)
+         {
+         
+            hideWinner();
+            battle.setVisible(true); 
+            battleAgain.setVisible(false); 
+             
+            
+         }
+      }
+
       
       private class warListener implements ActionListener
       {
          public void actionPerformed(ActionEvent e)
          {
-            setClicked(true); 
+            warTime.setVisible(false); 
+            
+            wPlay = game.getTopCard(1);
+            ePlay = game.getTopCard(2); 
+            setEast(ePlay);
+            setWest(wPlay);
+            
+             if(wPlay.getRank() > ePlay.getRank())
+            {
+               displayWinner(1); 
+               battleAgain.setVisible(true); 
+               game.pushCards(wPlay, ePlay, 1); 
+               game.pushCards(1);
+            }
+            else if (wPlay.getRank() < ePlay.getRank())
+            {
+               displayWinner(2); 
+               battleAgain.setVisible(true); 
+               game.pushCards(wPlay, ePlay, 2); 
+               game.pushCards(2); 
+            }
+               
+            else if (wPlay.getRank() == ePlay.getRank())
+            {
+                warTime.setVisible(true);
+                game.pushCards(wPlay, ePlay); 
+            }
+
+            
+             
          }
       }
 
       //Center Methods
-      public boolean isClicked()
-      {
-         return clicked;   
-      } 
-      
-       public void setClicked(boolean c)
-      {
-         clicked = c;
-      }
-           
-      public void viewWar()
-      {
-         warTime.setVisible(true);
-      }
+               
+   
       
       public void hideWar()
       {
@@ -333,10 +438,15 @@ public class GameBoard extends JFrame
       
       public void displayWinner(int i)
       {
-         if(i == 1);
+         if(i == 1)
+         {
             wWin.setVisible(true); 
-         if(i == 2);
+         }
+            
+         if(i == 2)
+         {
             eWin.setVisible(true);
+         }
       }
       
       public void hideWinner()
@@ -344,7 +454,9 @@ public class GameBoard extends JFrame
          wWin.setVisible(false);
          eWin.setVisible(false); 
       }
-                                
+      
+     
+                             
       
 
    public static void main(String[] args)

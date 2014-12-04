@@ -3,14 +3,15 @@
    This class defines the  game play for the war game
 */
 
-
 public class War 
 {
-
+   public static final int P1 = 1;
+   public static final int P2 = 2; 
    private int numPlayers = 1; 
    private Deck dealer, dw, de; 
    private Deck warPile;
-   private GameBoard board;  
+   private GameBoard board;
+   private boolean gameOver;   
  
    public War()
    {
@@ -23,68 +24,71 @@ public class War
             
       fillDeck(); //Add the cards to the dealer's pile    
       dealer.shuffle();//shuffle the dealer's deck
-      deal(); //deal the piles
+      deal(); //deal the piles       
       
-      //Opening preferences
-      
-      board = new GameBoard(); //open game board
-      
-      //if no one has lost
-      while(dw.isEmpty() != true && de.isEmpty() != true)
-      {
-         if(board.isClicked())
-         {
-      
-            board.hideWinner();
-            Card cw = dw.dequeue();
-            Card ce = de.dequeue();
-        
-            //pass them to the gameboard to display the images
-            board.setWPicture(cw.getFileName());
-            board.setEPicture(ce.getFileName()); 
-        
-            //compare the cards
-         
-            //not in war
-            if (cw.getRank()!= ce.getRank())
-            {
-               board.hideWar();
-               if (cw.getRank() > ce.getRank())
-               {
-                  dw.enqueue(cw);
-                  dw.enqueue(ce);
-                  while(warPile.isEmpty() != true)
-                     dw.enqueue(warPile.dequeue()); 
-                  board.displayWinner(1);    
-                     
-                }
-               
-               else if (cw.getRank() < ce.getRank())
-               {
-                  de.enqueue(cw);
-                  de.enqueue(ce);
-                  while(warPile.isEmpty() != true)
-                     de.enqueue(warPile.dequeue()); 
-                  board.displayWinner(2); 
-               }
-                 
-             }
-            //in war
-            else if(cw.getRank() == ce.getRank())
-            {
-               board.viewWar(); 
-               warPile.enqueue(cw);
-               warPile.enqueue(ce);
-            }
-            
-            board.setClicked(false);
-         }
-         
-         
-       }
    }
    
+   public Card getTopCard(int i)
+   {
+      Card thisCard = null; 
+      if( i == P1)
+      {
+          thisCard = dw.dequeue();
+      }
+      if(i == P2)
+      {
+         thisCard = de.dequeue();
+      }
+      
+      return thisCard; 
+    }
+    
+    public void pushCards(Card c, Card d, int i)
+    {
+      if( i == P1)
+      {
+         dw.enqueue(d);
+         dw.enqueue(c);
+      }
+      else if (i == P2)
+      {
+         de.enqueue(d);
+         de.enqueue(c); 
+      }
+   }
    
+   public void pushCards(Card c, Card d)
+   {
+      warPile.enqueue(c);
+      warPile.enqueue(d); 
+   }
+   
+   public void pushCards(int j)
+   {
+      for( int i = 0; i < warPile.getSize(); i++)
+      {
+         Card addMe = warPile.dequeue(); 
+         
+         if(j == P1)
+            dw.enqueue(addMe);
+         if(j == P2)
+            de.enqueue(addMe); 
+            
+      }
+   }
+   
+   public boolean hasAnyoneLost()
+   {
+      gameOver = false;
+      if(dw.isEmpty() || de.isEmpty())
+         gameOver = true;
+      
+      return gameOver;
+   }
+      
+  
+    
+      
    public void fillDeck()
    {
       //start with an empty card at the 2 of clubs
@@ -117,13 +121,7 @@ public class War
          i++;
       }
    }
-   
-   public static void main(String[] args)
-   {
-       War playWar = new War(); 
-   }
-
-      
+    
 
       
 }
